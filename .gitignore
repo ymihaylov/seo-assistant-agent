@@ -1,0 +1,26 @@
+# OS
+.DS_Store
+
+# IDEs
+.idea/
+.run/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+*.sqlite3
+
+# Environment variables
+.env
+
+# Frontend
+node_modules/
+dist/
+.vite/
+
+# Claude Code
+.claude/
