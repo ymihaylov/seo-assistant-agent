@@ -3,15 +3,12 @@ from typing import Dict, Any
 
 class SEOPromptBuilder:
     def build_user_payload(self, state: Dict[str, Any]) -> str:
-        """
-        Build prompt from state context.
-        Expected state:
-          session_title: str
-          instructions: str (current user message)
-          anchor: str | None (first user message)
-          current_draft: dict | None (previous agent suggestions)
-          constraints: dict | None (SEO constraints)
-        """
+        rag_context = state.get("rag_context", "")
+        if rag_context:
+            base_prompt = f"{rag_context}\n\n"
+        else:
+            base_prompt = ""
+
         parts = [
             f'Session Title: "{state.get("session_title", "")}"',
         ]
@@ -54,4 +51,4 @@ class SEOPromptBuilder:
             parts.append(f'Current User Instruction: """{instr}"""')
 
         parts.append("Return JSON only.")
-        return "\n".join(parts)
+        return base_prompt + "\n".join(parts)

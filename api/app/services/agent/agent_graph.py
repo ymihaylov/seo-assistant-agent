@@ -10,6 +10,8 @@ from .llm import chat_json
 from .prompt_builder import SEOPromptBuilder
 from .prompts import SYSTEM_PROMPT
 from .score import score_result
+from ..rag.rag_service import RAGService
+from ..rag.vector_store_service import VectorStoreService
 
 
 class Suggestion(BaseModel):
@@ -22,8 +24,21 @@ class Suggestion(BaseModel):
 
 prompt_builder = SEOPromptBuilder()
 
+# Initialize RAG components
+vector_store = VectorStoreService()
+rag_service = RAGService(vector_store)
+
+vector_store.initialize_seo_knowledge()
+
 
 async def suggest_node(state: dict):
+    user_query = state.get("instructions", "")
+    session_title = state.get("session_title", "")
+
+    rag_context = rag_service.get_relevant_context(user_query, session_title)
+    if rag_context:
+        state["rag_context"] = rag_context
+
     raw = await chat_json(SYSTEM_PROMPT, prompt_builder.build_user_payload(state))
 
     suggestions = {
